@@ -3,12 +3,6 @@ const path = require("path");
 const { nanoid } = require("nanoid");
 
 const contactsPath = path.join(__dirname, "db", "contacts.json");
-
-// const readFile = async () => {
-//   let data = await fs.readFile(contactsPath);
-//   console.log(JSON.parse(data));
-// };
-// readFile();
 const updateContacts = async (data) => {
   const newData = JSON.stringify(data, null, 2);
   await fs.writeFile(contactsPath, newData);
@@ -37,12 +31,12 @@ async function removeContact(contactId) {
   const result = parsedData.findIndex(
     (item) => item.id === contactId.toString()
   );
-  console.log(result);
   if (result === -1) {
     return null;
   }
-  const removeContact = data.splice(result, 1);
-  updateContacts(data);
+  const removeContact = parsedData.splice(result, 1);
+
+  updateContacts(parsedData);
   console.log(removeContact);
 }
 
@@ -55,12 +49,11 @@ async function addContact(name, email, phone) {
     phone: phone,
   };
 
-  const jData = data.push(newContact);
-  const newData = JSON.stringify(jData);
-  console.log("newData: ", newData);
-  console.log("newContact: ", newContact);
+  const parsedData = JSON.parse(data);
+  await parsedData.push(newContact);
 
-  return await fs.writeFile(contactsPath, newData);
+  updateContacts(parsedData);
+  console.log("parsedData: ", parsedData);
 }
 
 module.exports = {
